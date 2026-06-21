@@ -2,11 +2,11 @@ import WavPlayer from './WavPlayer'
 import {flowMax, SimplePropsAdder, addStateHandlers} from 'ad-hok'
 import {FC} from 'react'
 import {typedAs} from './utils/typedAs'
-import {addEffectOnMount} from 'ad-hok-utils'
+import {addEffectOnMount, branchIfNullish} from 'ad-hok-utils'
 
 import './index.css'
 
-const EXAMPLE_WAV_FILE_URL = "https://www.mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/Samples/AFsp/M1F1-float32WE-AFsp.wav"
+const EXAMPLE_WAV_FILE_URL = "/M1F1-float32WE-AFsp.wav"
 
 const loadWavFile = async ({onWavFileLoaded}: {
   onWavFileLoaded: (wavFileContents: Blob) => void,
@@ -42,6 +42,12 @@ const addWavFileContents: SimplePropsAdder<{
   addEffectOnMount(
     ({onWavFileLoaded}) => () => {
       loadWavFile({onWavFileLoaded})
+    },
+  ),
+  branchIfNullish(
+    'wavFileContents',
+    {
+      returns: () => <div>loading</div>,
     },
   ),
 )

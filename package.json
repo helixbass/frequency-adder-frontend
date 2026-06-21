@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "ad-hok": "^0.1.1",
-    "ad-hok-utils": "^0.0.5",
+    "ad-hok-utils": "^0.1.0-beta.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
