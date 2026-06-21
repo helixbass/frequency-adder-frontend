@@ -4,6 +4,7 @@ import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
 
 import { FrequencyPlayer } from './FrequencyPlayer'
+import { FrequencyEditor } from './FrequencyEditor'
 import {GRAPHQL_BACKEND_URL} from './backend'
 import {typedAs} from './utils/typedAs'
 
@@ -36,10 +37,11 @@ const App: FC<Props> = flowMax(
       }),
     },
   ),
-  ({frequency}) => (
-    <>
+  ({frequency, onSubmitFrequency, clearFrequency}) => (
+    <div>
+      <FrequencyEditor onSubmitFrequency={onSubmitFrequency} clearFrequency={clearFrequency} />
       {frequency != null && <FrequencyPlayer frequency={frequency} />}
-    </>
+    </div>
   )
 )
 
