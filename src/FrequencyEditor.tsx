@@ -9,7 +9,13 @@ interface Props {
 export const FrequencyEditor: FC<Props> = flowMax(
   addState('frequencyValue', 'setFrequencyValue', ''),
   ({frequencyValue, setFrequencyValue, clearFrequency, onSubmitFrequency}) =>
-    <form>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+
+        onSubmitFrequency(parseFloat(frequencyValue))
+      }}
+    >
       <label htmlFor="frequencyValue">Frequency</label>
       <input
         type="text"
@@ -20,8 +26,6 @@ export const FrequencyEditor: FC<Props> = flowMax(
         }}
         onFocus={clearFrequency}
       />
-      <button onClick={() => {
-        onSubmitFrequency(parseFloat(frequencyValue))
-      }}>Submit</button>
+      <button type="submit">Submit</button>
     </form>
 )
