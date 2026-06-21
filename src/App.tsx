@@ -1,13 +1,15 @@
-import { WavLoader } from './WavLoader'
 import {flowMax} from 'ad-hok'
 import {FC} from 'react'
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
 
+import { WavLoader } from './WavLoader'
+import {GRAPHQL_BACKEND_URL} from './backend'
+
 import './index.css'
 
 const apolloClient = new ApolloClient({
-  link: new HttpLink({uri: "http://localhost:8080/graphql"}),
+  link: new HttpLink({uri: GRAPHQL_BACKEND_URL}),
   cache: new InMemoryCache(),
 })
 

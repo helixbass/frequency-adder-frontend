@@ -1,14 +1,15 @@
 import { FC } from 'react'
 import { flowMax, SimplePropsAdder, addStateHandlers, addProps } from 'ad-hok'
-import {addEffectOnMount} from 'ad-hok-utils'
+import {branchIfNullish} from 'ad-hok-utils'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 
 import WavPlayer from './WavPlayer'
 import {typedAs} from './utils/typedAs'
+import {backendFileUrlFromAbsoluteUrlPath} from './backend'
 
 const WAV_FILE_URL_QUERY = gql`
-  query WavFileUrl($uuid: String!) {
+  query WavFileUrl($uuid: UUID!) {
     wavFileUrl(uuid: $uuid)
   }
 `
@@ -16,18 +17,14 @@ const WAV_FILE_URL_QUERY = gql`
 const addLoadedWavUrl: SimplePropsAdder<{
   wavUrl: string
 }> = flowMax(
-  addStateHandlers(
-    {
-      wavUrl: typedAs<string | undefined>(undefined),
-    },
-    {
-      onQueryResolved: () => (wavUrl: string) => ({
-        wavUrl,
-      })
-    }
-  ),
-  addProps(() => {
-    const { loading, error, data } = useQuery<string | null>(WAV_FILE_URL_QUERY)
+  addProps(({uuid}) => {
+    const { loading, error, data } = useQuery<{
+      wavFileUrl: string | null
+    }>(WAV_FILE_URL_QUERY, {
+      variables: {
+        uuid,
+      }
+    })
 
     if (error) {
       throw new Error("not expecting wavFileUrl error at the moment")
@@ -36,22 +33,27 @@ const addLoadedWavUrl: SimplePropsAdder<{
     if (data === undefined) return {
       wavUrl: typedAs<string | undefined>(undefined),
     }
-  }),
-  addEffectOnMount(
-    ({onQueryResolved}) => () => {
+
+    if (data.wavFileUrl === null) return {
+      wavUrl: typedAs<string | undefined>(undefined),
     }
-  ),
+
+    console.log({data})
+
+    return {
+      wavUrl: backendFileUrlFromAbsoluteUrlPath(data.wavFileUrl),
+    }
+  }),
+  branchIfNullish('wavUrl'),
 )
 
 interface Props {
   uuid: string
 }
 
-const WavLoader: FC<Props> = flowMax(
+export const WavLoader: FC<Props> = flowMax(
   // TODO: assert that uuid prop never changes after mount? Also same for
   // wavUrl prop in <WavPlayer>?
   addLoadedWavUrl,
   ({wavUrl}) => <WavPlayer wavUrl={wavUrl} />
 )
-
-export const WavLoader
