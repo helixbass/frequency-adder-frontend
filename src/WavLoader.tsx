@@ -46,7 +46,9 @@ const addLoadedWavUrl: AddLoadedWavUrl = flowMax(
       wavUrl: backendFileUrlFromAbsoluteUrlPath(data.wavFileUrl),
     }
   }),
-  branchIfNullish('wavUrl'),
+  branchIfNullish('wavUrl', {
+    returns: () => <div>loading</div>
+  }),
 )
 
 interface Props {
