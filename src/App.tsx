@@ -1,10 +1,11 @@
-import {flowMax} from 'ad-hok'
+import {flowMax, addWrapper, addStateHandlers} from 'ad-hok'
 import {FC} from 'react'
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
 
-import { WavLoader } from './WavLoader'
+import { FrequencyPlayer } from './FrequencyPlayer'
 import {GRAPHQL_BACKEND_URL} from './backend'
+import {typedAs} from './utils/typedAs'
 
 import './index.css'
 
@@ -17,11 +18,27 @@ interface Props {
 }
 
 const App: FC<Props> = flowMax(
-  () => (
+  addWrapper((render) =>
+    <ApolloProvider client={apolloClient}>
+      {render()}
+    </ApolloProvider>
+  ),
+  addStateHandlers(
+    {
+      frequency: typedAs<number | undefined>(undefined),
+    },
+    {
+      onSubmitFrequency: () => (frequency: number) => ({
+        frequency,
+      }),
+      clearFrequency: () => () => ({
+        frequency: undefined,
+      }),
+    },
+  ),
+  ({frequency}) => (
     <>
-      <ApolloProvider client={apolloClient}>
-        <WavLoader uuid="A52691A1-64AA-40C5-AEA8-9FD8C67230C4" />
-      </ApolloProvider>
+      {frequency != null && <FrequencyPlayer frequency={frequency} />}
     </>
   )
 )
