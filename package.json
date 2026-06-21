@@ -11,10 +11,13 @@
     "prepare": "panda codegen"
   },
   "dependencies": {
+    "@apollo/client": "^4.2.3",
     "ad-hok": "^0.1.1",
     "ad-hok-utils": "^0.1.0-beta.1",
+    "graphql": "^16.14.2",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
