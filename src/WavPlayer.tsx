@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { css } from '../styled-system/css'
-import { flowMax, addProps } from 'ad-hok'
+import { flowMax } from 'ad-hok'
 
 const styles = {
   root: css({
@@ -9,20 +9,14 @@ const styles = {
 }
 
 interface Props {
-  wavFileContents: Blob,
+  wavUrl: string,
 }
 
 const WavPlayer: FC<Props> = flowMax(
-  addProps(
-    ({wavFileContents}) => ({
-      browserLocalWavFileUrl: URL.createObjectURL(wavFileContents),
-    }),
-    ['wavFileContents'],
-  ),
-  ({browserLocalWavFileUrl}) =>
+  ({wavUrl}) =>
     <div className={styles.root}>
       <audio controls>
-        <source src={browserLocalWavFileUrl} type="audio/wav" />
+        <source src={wavUrl} type="audio/wav" />
       </audio>
     </div>,
 )
