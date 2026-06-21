@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { flowMax, SimplePropsAdder, addStateHandlers, addProps } from 'ad-hok'
+import { flowMax, SimplePropsAdder, addProps } from 'ad-hok'
 import {branchIfNullish} from 'ad-hok-utils'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
@@ -14,11 +14,15 @@ const WAV_FILE_URL_QUERY = gql`
   }
 `
 
-const addLoadedWavUrl: SimplePropsAdder<{
+type AddLoadedWavUrl = <TProps extends {
+  uuid: string
+}>(props: TProps) => TProps & {
   wavUrl: string
-}> = flowMax(
+}
+
+const addLoadedWavUrl: AddLoadedWavUrl = flowMax(
   addProps(({uuid}) => {
-    const { loading, error, data } = useQuery<{
+    const { loading: _loading, error, data } = useQuery<{
       wavFileUrl: string | null
     }>(WAV_FILE_URL_QUERY, {
       variables: {
