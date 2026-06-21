@@ -42,8 +42,6 @@ const addLoadedWavUrl: AddLoadedWavUrl = flowMax(
       wavUrl: typedAs<string | undefined>(undefined),
     }
 
-    console.log({data})
-
     return {
       wavUrl: backendFileUrlFromAbsoluteUrlPath(data.wavFileUrl),
     }
