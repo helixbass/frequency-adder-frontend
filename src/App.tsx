@@ -3,8 +3,9 @@ import {FC} from 'react'
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
 
-import { FrequencyPlayer } from './FrequencyPlayer'
-import { FrequencyEditor } from './FrequencyEditor'
+import { FrequenciesPlayer } from './FrequenciesPlayer'
+import { FrequenciesEditor } from './FrequenciesEditor'
+import { Frequencies } from './types'
 import {GRAPHQL_BACKEND_URL} from './backend'
 import {typedAs} from './utils/typedAs'
 
@@ -26,21 +27,21 @@ const App: FC<Props> = flowMax(
   ),
   addStateHandlers(
     {
-      frequency: typedAs<number | undefined>(undefined),
+      frequencies: typedAs<Frequencies | undefined>(undefined),
     },
     {
-      onSubmitFrequency: () => (frequency: number) => ({
-        frequency,
+      onSubmitFrequencies: () => (frequencies: Frequencies) => ({
+        frequencies,
       }),
-      clearFrequency: () => () => ({
-        frequency: undefined,
+      clearFrequencies: () => () => ({
+        frequencies: undefined,
       }),
     },
   ),
-  ({frequency, onSubmitFrequency, clearFrequency}) => (
+  ({frequencies, onSubmitFrequencies, clearFrequencies}) => (
     <div>
-      <FrequencyEditor onSubmitFrequency={onSubmitFrequency} clearFrequency={clearFrequency} />
-      {frequency != null && <FrequencyPlayer frequency={frequency} />}
+      <FrequenciesEditor onSubmitFrequencies={onSubmitFrequencies} clearFrequencies={clearFrequencies} />
+      {frequencies != null && <FrequenciesPlayer frequencies={frequencies} />}
     </div>
   )
 )

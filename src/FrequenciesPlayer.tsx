@@ -5,20 +5,21 @@ import {gql} from '@apollo/client'
 import {useMutation} from '@apollo/client/react'
 
 import { WavLoader } from './WavLoader'
+import { Frequencies } from './types'
 import {typedAs} from './utils/typedAs'
 
 const CREATE_WAV_FILE_MUTATION = gql`
-  mutation CreateWavFile($frequency: Float!) {
-    createWavFile(frequency: $frequency)
+  mutation CreateWavFile($frequencies: [FrequencyAndMagnitude!]!) {
+    createWavFile(frequencies: $frequencies)
   }
 `
 
 interface Props {
-  frequency: number
+  frequencies: Frequencies
 }
 
-export const FrequencyPlayer: FC<Props> = flowMax(
-  // TODO: assert that frequency prop never changes after mounted?
+export const FrequenciesPlayer: FC<Props> = flowMax(
+  // TODO: assert that frequencies prop never changes after mounted?
   addStateHandlers(
     {
       uuid: typedAs<string | undefined>(undefined),
@@ -38,12 +39,12 @@ export const FrequencyPlayer: FC<Props> = flowMax(
       createWavFileMutate,
     }
   }),
-  addEffectOnMount(({createWavFileMutate, onUuidFetched, frequency}) => () => {
+  addEffectOnMount(({createWavFileMutate, onUuidFetched, frequencies}) => () => {
     const inner = async () => {
       try {
         const { data } = await createWavFileMutate({
           variables: {
-            frequency,
+            frequencies,
           }
         })
 
