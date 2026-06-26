@@ -41,7 +41,7 @@ const App: FC<Props> = flowMax(
   ({frequencies, onSubmitFrequencies, clearFrequencies}) => (
     <div>
       <FrequenciesEditor onSubmitFrequencies={onSubmitFrequencies} clearFrequencies={clearFrequencies} />
-      {frequencies != null && <FrequenciesPlayer frequencies={frequencies} />}
+      {frequencies != null && <FrequenciesPlayer frequencies={frequencies} key={frequencies.length} />}
     </div>
   )
 )
