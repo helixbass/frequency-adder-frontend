@@ -1,8 +1,9 @@
-import {flowMax, addStateHandlers, addHandlers} from 'ad-hok'
+import {flowMax, addStateHandlers, addHandlers, addEffect} from 'ad-hok'
 import {FC} from 'react'
 
 import {typedAs} from './utils/typedAs'
 import {withoutIndex} from './utils/withoutIndex'
+import {checkNonNullish} from './utils/assert'
 import {Frequencies, FrequencyAndMagnitude} from './types'
 
 interface FrequencyAndMagnitudeInputValues {
@@ -25,17 +26,21 @@ export const FrequenciesEditor: FC<Props> = flowMax(
   addStateHandlers(
     {
       frequencies: typedAs<FrequencyAndMagnitudeInputValues[]>([]),
-      inProgressFrequency: typedAs<FrequencyAndMagnitudeInputValues | undefined>(undefined),
+      isAddingNewFrequency: false,
     },
     {
       onDeleteFrequencyIndex: ({frequencies}) => (index: number) => ({
         frequencies: withoutIndex(index, frequencies),
       }),
       onAddNewFrequency: () => () => ({
-        inProgressFrequency: {
-          frequency: '',
-          magnitude: '',
-        }
+        isAddingNewFrequency: true,
+      }),
+      onSaveInProgressFrequency: ({frequencies}) => (inProgressFrequency: FrequencyAndMagnitudeInputValues) => ({
+          frequencies: [
+            ...frequencies,
+            inProgressFrequency
+          ],
+          isAddingNewFrequency: false,
       }),
     }
   ),
@@ -44,30 +49,88 @@ export const FrequenciesEditor: FC<Props> = flowMax(
       onSubmitFrequencies(parseFrequencies(frequencies))
     }
   }),
-  ({frequencies, onDeleteFrequencyIndex, clearFrequencies, submitFrequencies, onAddNewFrequency}) =>
+  addEffect(({submitFrequencies, frequencies}) => () => {
+    if (frequencies.length === 0) {
+      return
+    }
+    submitFrequencies()
+  }, ['frequencies']),
+  addEffect(({clearFrequencies, isAddingNewFrequency}) => () => {
+    if (isAddingNewFrequency) {
+      clearFrequencies()
+    }
+  }, ['isAddingNewFrequency']),
+  ({frequencies, onDeleteFrequencyIndex, onAddNewFrequency, isAddingNewFrequency, onSaveInProgressFrequency}) =>
     <>
       <SavedFrequencies frequencies={frequencies} onDeleteFrequencyIndex={onDeleteFrequencyIndex} />
-      {frequencies.length <= 5 && <AddNewFrequencyButton onClick={onAddNewFrequency} />}
-      <form
-        onSubmit={(event) => {
-          event.preventDefault()
-
-          onSubmitFrequencies(parseFloat(frequencyValue))
-        }}
-      >
-        <label htmlFor="frequencyValue">Frequency</label>
-        <input
-          type="text"
-          id="frequencyValue"
-          value={frequencyValue}
-          onChange={(event) => {
-            setFrequencyValue(event.target.value)
-          }}
-          onFocus={clearFrequencies}
-        />
-        <button type="submit">Submit</button>
-      </form>
+      {
+        isAddingNewFrequency
+          ? <InProgressFrequency onSave={onSaveInProgressFrequency} />
+          : frequencies.length < 5 && <AddNewFrequencyButton onClick={onAddNewFrequency} />
+      }
     </>
+)
+
+interface InProgressFrequencyProps {
+  onSave: (inProgressFrequency: FrequencyAndMagnitudeInputValues) => void
+}
+
+const InProgressFrequency: FC<InProgressFrequencyProps> = flowMax(
+  addStateHandlers(
+    {
+      inProgressFrequency: {
+        frequency: '',
+        magnitude: '',
+      },
+    },
+    {
+      setFrequency: ({inProgressFrequency}) => (frequency: string) => ({
+        inProgressFrequency: {
+          ...inProgressFrequency,
+          frequency,
+        }
+      }),
+      setMagnitude: ({inProgressFrequency}) => (magnitude: string) => ({
+        inProgressFrequency: {
+          ...inProgressFrequency,
+          magnitude,
+        }
+      }),
+    },
+  ),
+  addHandlers({
+    save: ({onSave, inProgressFrequency}) => () => {
+      onSave(inProgressFrequency)
+    }
+  }),
+  ({save, inProgressFrequency, setFrequency, setMagnitude}) =>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+
+        save()
+      }}
+    >
+      <label htmlFor="frequency">Frequency</label>
+      <input
+        type="text"
+        id="frequency"
+        value={inProgressFrequency.frequency}
+        onChange={(event) => {
+          setFrequency(event.target.value)
+        }}
+      />
+      <label htmlFor="magnitude">Magnitude</label>
+      <input
+        type="text"
+        id="magnitude"
+        value={inProgressFrequency.magnitude}
+        onChange={(event) => {
+          setMagnitude(event.target.value)
+        }}
+      />
+      <button type="submit">Submit</button>
+    </form>
 )
 
 interface AddNewFrequencyButtonProps {
