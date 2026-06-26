@@ -62,3 +62,36 @@ export const FrequenciesEditor: FC<Props> = flowMax(
       </form>
     </>
 )
+
+interface SavedFrequenciesProps {
+  frequencies: FrequencyAndMagnitudeInputValues[]
+  onDeleteFrequencyIndex: (index: number) => void
+}
+
+const SavedFrequencies: FC<SavedFrequenciesProps> = ({frequencies, onDeleteFrequencyIndex}) =>
+  <div>
+    {frequencies.map((frequency, index) => <SavedFrequency index={index} frequency={frequency} onDeleteFrequencyIndex={onDeleteFrequencyIndex} />)}
+  </div>
+
+interface SavedFrequencyProps {
+  frequency: FrequencyAndMagnitudeInputValues
+  index: number
+  onDeleteFrequencyIndex: (index: number) => void
+}
+
+const SavedFrequency: FC<SavedFrequencyProps> = ({frequency, onDeleteFrequencyIndex, index}) =>
+  <div>
+    <span>Frequency</span>
+    <span>{frequency.frequency}</span>
+    <span>Magnitude</span>
+    <span>{frequency.magnitude}</span>
+    <DeleteSavedFrequencyButton onDeleteFrequencyIndex={onDeleteFrequencyIndex} index={index} />
+  </div>
+
+interface DeleteSavedFrequencyButtonProps {
+  index: number
+  onDeleteFrequencyIndex: (index: number) => void
+}
+
+const DeleteSavedFrequencyButton: FC<DeleteSavedFrequencyButtonProps> = ({onDeleteFrequencyIndex, index}) =>
+  <button onClick={() => onDeleteFrequencyIndex(index)}>X</button>
