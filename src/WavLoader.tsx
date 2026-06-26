@@ -1,5 +1,5 @@
-import { FC } from 'react'
-import { flowMax, SimplePropsAdder, addProps } from 'ad-hok'
+import type { FC } from 'react'
+import { flowMax, addProps } from 'ad-hok'
 import {branchIfNullish} from 'ad-hok-utils'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'

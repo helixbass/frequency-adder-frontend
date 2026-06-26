@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { css } from '../styled-system/css'
 import { flowMax } from 'ad-hok'
 

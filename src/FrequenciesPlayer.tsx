@@ -1,11 +1,11 @@
 import {flowMax, addStateHandlers, addProps} from 'ad-hok'
-import {FC} from 'react'
+import type {FC} from 'react'
 import {branchIfNullish, addEffectOnMount} from 'ad-hok-utils'
 import {gql} from '@apollo/client'
 import {useMutation} from '@apollo/client/react'
 
 import { WavLoader } from './WavLoader'
-import { Frequencies } from './types'
+import type { Frequencies } from './types'
 import {typedAs} from './utils/typedAs'
 
 const CREATE_WAV_FILE_MUTATION = gql`

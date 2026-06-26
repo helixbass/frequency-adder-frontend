@@ -1,11 +1,11 @@
 import {flowMax, addWrapper, addStateHandlers} from 'ad-hok'
-import {FC} from 'react'
+import type {FC} from 'react'
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
 
 import { FrequenciesPlayer } from './FrequenciesPlayer'
 import { FrequenciesEditor } from './FrequenciesEditor'
-import { Frequencies } from './types'
+import type { Frequencies } from './types'
 import {GRAPHQL_BACKEND_URL} from './backend'
 import {typedAs} from './utils/typedAs'
 

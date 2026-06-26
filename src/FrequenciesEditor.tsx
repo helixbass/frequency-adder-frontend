@@ -1,10 +1,10 @@
 import {flowMax, addStateHandlers, addHandlers, addEffect} from 'ad-hok'
-import {FC} from 'react'
+import type {FC} from 'react'
 
 import {typedAs} from './utils/typedAs'
 import {withoutIndex} from './utils/withoutIndex'
 import {checkNonNullish} from './utils/assert'
-import {Frequencies, FrequencyAndMagnitude} from './types'
+import type {Frequencies, FrequencyAndMagnitude} from './types'
 
 interface FrequencyAndMagnitudeInputValues {
   frequency: string
@@ -53,6 +53,7 @@ export const FrequenciesEditor: FC<Props> = flowMax(
     if (frequencies.length === 0) {
       return
     }
+
     submitFrequencies()
   }, ['frequencies']),
   addEffect(({clearFrequencies, isAddingNewFrequency}) => () => {
@@ -147,7 +148,7 @@ interface SavedFrequenciesProps {
 
 const SavedFrequencies: FC<SavedFrequenciesProps> = ({frequencies, onDeleteFrequencyIndex}) =>
   <div>
-    {frequencies.map((frequency, index) => <SavedFrequency index={index} frequency={frequency} onDeleteFrequencyIndex={onDeleteFrequencyIndex} />)}
+    {frequencies.map((frequency, index) => <SavedFrequency index={index} frequency={frequency} onDeleteFrequencyIndex={onDeleteFrequencyIndex} key={index} />)}
   </div>
 
 interface SavedFrequencyProps {
