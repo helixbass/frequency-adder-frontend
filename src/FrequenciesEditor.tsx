@@ -17,7 +17,7 @@ const parseFrequencies = (frequencies: FrequencyAndMagnitudeInputValues[]): Freq
   }))
 
 interface Props {
-  onSubmitFrequencies: (frequencies: number) => void
+  onSubmitFrequencies: (frequencies: Frequencies) => void
   clearFrequencies: () => void
 }
 
@@ -25,10 +25,17 @@ export const FrequenciesEditor: FC<Props> = flowMax(
   addStateHandlers(
     {
       frequencies: typedAs<FrequencyAndMagnitudeInputValues[]>([]),
+      inProgressFrequency: typedAs<FrequencyAndMagnitudeInputValues | undefined>(undefined),
     },
     {
       onDeleteFrequencyIndex: ({frequencies}) => (index: number) => ({
         frequencies: withoutIndex(index, frequencies),
+      }),
+      onAddNewFrequency: () => () => ({
+        inProgressFrequency: {
+          frequency: '',
+          magnitude: '',
+        }
       }),
     }
   ),
@@ -37,10 +44,10 @@ export const FrequenciesEditor: FC<Props> = flowMax(
       onSubmitFrequencies(parseFrequencies(frequencies))
     }
   }),
-  ({frequencies, onDeleteFrequencyIndex, clearFrequencies, submitFrequencies}) =>
+  ({frequencies, onDeleteFrequencyIndex, clearFrequencies, submitFrequencies, onAddNewFrequency}) =>
     <>
       <SavedFrequencies frequencies={frequencies} onDeleteFrequencyIndex={onDeleteFrequencyIndex} />
-      {frequencies.length <= 5 && <AddNewFrequencyButton />}
+      {frequencies.length <= 5 && <AddNewFrequencyButton onClick={onAddNewFrequency} />}
       <form
         onSubmit={(event) => {
           event.preventDefault()
@@ -62,6 +69,13 @@ export const FrequenciesEditor: FC<Props> = flowMax(
       </form>
     </>
 )
+
+interface AddNewFrequencyButtonProps {
+  onClick: () => void
+}
+
+const AddNewFrequencyButton: FC<AddNewFrequencyButtonProps> = ({onClick}) =>
+  <button onClick={onClick}>+</button>
 
 interface SavedFrequenciesProps {
   frequencies: FrequencyAndMagnitudeInputValues[]
